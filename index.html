@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="wrapper-for-input">
+        <div id="input-ingredient-area">
+            <h2>Enter your menu</h2>
+            <form id="input">
+                <div class="form-group">
+                    <label for="set-input" class="col-sm-2 col-form-label">Set</label>
+                    <input type="text" id="set-input" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="dish-input" class="col-sm-2 col-form-label">Dish name</label>
+                    <input type="text" id="dish-input" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="index-input" class="col-sm-2 col-form-label">Index</label>
+                    <input id="index-input" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-2 col-form-label">Ingredient</label>
+                    <button id="input-new-row">Add</button>
+                    <button id="input-remove-row">Remove</button>
+                </div>
+
+                <div class="form-group" id="ingredient-node">
+                    <label class="col-sm-2 col-form-label"></label>
+                    <input type="text" class="ingredient-input form-control" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="button" value="clear" id="clear"  class="btn btn-warning">Clear</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const inputNewRow = document.getElementById('input-new-row')
+        const filterNewRow = document.getElementById('filter-new-row')
+        const inputDeleteRow = document.getElementById('input-remove-row')
+        const filterDeleteRow = document.getElementById('filter-remove-row')
+
+        const ingredientNode = document.getElementById('ingredient-node')
+
+        const indexInput = document.getElementById('index-input')
+        const setInput = document.getElementById('set-input')
+        const dishInput = document.getElementById('dish-input')
+        const input = document.getElementById('input')
+        const filterInput = document.getElementById('filter-input')
+
+        const clear = document.getElementById('clear')
+
+        function clearArr() {
+            for (let i = 0; i < 4; i++) {
+                allArr[i] = []
+            }
+        }
+
+        function clearHTML(arr) {
+            arr.forEach(el => el.innerHTML = '')
+        }
+
+        function clearValue(arr) {
+            arr.forEach(el => el.value = '')
+        }
+
+        inputNewRow.addEventListener('click', function (e) {
+            e.preventDefault()
+            let newLabel = document.createElement('label')
+            let newInput = document.createElement('input')
+            newLabel.setAttribute('class', 'col-sm-2 col-form-label')
+            newInput.setAttribute('class', 'ingredient-input form-control')
+            newInput.required = true
+            if (ingredientNode.childNodes.length <= 13) {
+                ingredientNode.appendChild(newLabel)
+                ingredientNode.appendChild(newInput)
+            }
+            // input.insertBefore(newInput, input.childNodes[input.childNodes.length - 12])
+        })
+
+        inputDeleteRow.addEventListener('click', function (e) {
+            e.preventDefault()
+            if (ingredientNode.childNodes.length > 5) {
+                ingredientNode.removeChild(ingredientNode.lastChild)
+                ingredientNode.removeChild(ingredientNode.lastChild)
+            }
+        })
+
+        clear.addEventListener('click', (e) => {
+            e.preventDefault()
+            let buttons = document.querySelectorAll('input')
+            buttons.forEach((el) => {
+                el.value = ''
+            })
+        })
+
+        input.addEventListener('submit', (e) => {
+            e.preventDefault()
+            let ingredientArr = []
+            let ingredients = document.querySelectorAll('.ingredient-input')
+            ingredients.forEach(el => ingredientArr.push(el.value))
+            let arr = [setInput, indexInput, dishInput]
+
+            const newDish = {
+                set: setInput.value,
+                name: dishInput.value,
+                index: indexInput.value,
+                ingredients: ingredientArr
+            }
+            console.log(newDish)
+            $.ajax({
+                url: 'http://localhost:3000/post',
+                type: 'POST',
+                dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(newDish),
+                success: function (data, textStatus, jqXHR) {
+                    console.log(data);
+                    console.log(textStatus);
+                    console.log(jqXHR);
+                }
+            })
+            clearValue(arr)
+            clearValue(ingredients)
+
+            // sendRequest(newDish)
+        })
+
+    </script>
+</body>
+
+</html>
