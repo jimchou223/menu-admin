@@ -1,188 +1,238 @@
+const inputNewRow = document.getElementById('input-new-row')
 const filterNewRow = document.getElementById('filter-new-row')
+const inputDeleteRow = document.getElementById('input-remove-row')
 const filterDeleteRow = document.getElementById('filter-remove-row')
-const filterInput = document.getElementById('filter-input')
+
+const ingredientNode = document.getElementById('ingredient-node')
+
+let indexInput = document.getElementById('index-input')
+let setInput = document.getElementById('set-input')
+let dishInput = document.getElementById('dish-input')
+let input = document.getElementById('input')
+let filterInput = document.getElementById('filter-input')
+let categoryInput = document.getElementById('category-input')
+
+const searchByName = document.getElementById('search-by-name')
+const dishNameSearch = document.getElementById('dish-name-search')
+
+const searchResult = document.getElementById('search-result')
 
 const clear = document.getElementById('clear')
 
-const filterNode = document.getElementById('filter-node')
-const resultArea = document.getElementById('result-area')
+let arr = [setInput, indexInput, dishInput, categoryInput]
 
-filterNewRow.addEventListener('click', function (e) {
+function clearArr() {
+    for (let i = 0; i < 4; i++) {
+        allArr[i] = []
+    }
+}
+
+function clearHTML(arr) {
+    arr.forEach(el => el.innerHTML = '')
+}
+
+function clearValue(arr) {
+    arr.forEach(el => el.value = '')
+}
+
+inputNewRow.addEventListener('click', function (e) {
     e.preventDefault()
+    let newLabel = document.createElement('label')
     let newInput = document.createElement('input')
-    newInput.setAttribute('class', 'filter-input form-control')
+    newLabel.setAttribute('class', 'col-sm-2 col-form-label')
+    newInput.setAttribute('class', 'ingredient-input form-control')
     newInput.required = true
-    if (filterNode.childNodes.length <= 13) {
-        filterNode.appendChild(newInput)
-    }
-
+    // if (ingredientNode.childNodes.length <= 13) {
+    ingredientNode.appendChild(newLabel)
+    ingredientNode.appendChild(newInput)
+    // }
+    // input.insertBefore(newInput, input.childNodes[input.childNodes.length - 12])
 })
 
-filterDeleteRow.addEventListener('click', function (e) {
+inputDeleteRow.addEventListener('click', function (e) {
     e.preventDefault()
-    if (filterNode.childNodes.length > 3) {
-        filterNode.removeChild(filterNode.lastChild)
-    }
+    // if (ingredientNode.childNodes.length > 5) {
+    ingredientNode.removeChild(ingredientNode.lastChild)
+    ingredientNode.removeChild(ingredientNode.lastChild)
+    // }
 })
 
-function Package(set) {
-    this.set = set,
-        // this.content = []
-        this.score = 0
-}
+// clear.addEventListener('click', (e) => {
+//     e.preventDefault()
+//     console.log('clear')
+//     window.location.reload()
 
-function findUnique(arr) {
-    let setList = []
-    arr.forEach(el => {
-        if (!setList.includes(el.set)) {
-            setList.push(el.set)
-        }
-    })
-    return setList
-}
+// })
 
-function createUniqueArr(arr) {
-    let uniqueArr = []
-    arr.forEach((el) => {
-        let newEl = new Package(el)
-        uniqueArr.push(newEl)
-    })
-    return uniqueArr
-}
+$('#clear').click(function (e) {
+    e.preventDefault()
+    console.log('clear')
+    window.location.reload()
+})
 
-function categorize(arr, data) {
-    for (let i = 0; i < arr.length; i++) {
-        for (let j = 0; j < data.length; j++) {
-            if (arr[i].set == data[j].set) {
-                arr[i].content.push(data[j])
-            }
-        }
+$('#remove').click(function (e) {
+    e.preventDefault()
+    const newDish = {
+        name: dishInput.value,
     }
-    return arr
 
-}
-
-
-function checkIngredient(arr, filterArr) {
-    arr.forEach((el) => {
-        for (let i = 0; i < el.ingredients.length; i++) {
-            for (let j = 0; j < filterArr.length; j++) {
-                if (el.ingredients[i].includes(filterArr[j])) {
-                    el.ok = false;
-                    return
-                } else {
-                    el.ok = true
-                }
-            }
-
+    $.ajax({
+        // url: 'http://localhost:3000/deleteone',
+        url: 'https://menu-server-jim.herokuapp.com/deleteone',
+        type: 'POST',
+        dataType: 'json',
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify(newDish),
+        success: function (data, textStatus, jqXHR) {
+            console.log(data);
+            console.log(textStatus);
+            console.log(jqXHR);
         }
     })
-    return arr
-}
+    clearValue(arr)
+    ingredientNode.innerHTML = ''
+    // clearValue(ingredients)
+})
 
-// sort the array by score
-function sortArr(arr) {
-    arr.sort(function (a, b) {
-        a = a.score
-        b = b.score
-        return b - a
-    })
-}
-
-
-
-// count the score for each set
-function countRank(arr, uniqueArr) {
-    arr.forEach((el) => {
-        for (let i = 0; i < uniqueArr.length; i++) {
-            if (el.ok && el.set === uniqueArr[i].set) {
-                uniqueArr[i].score++
-            }
-        }
-    })
-}
-
-// render the arr according to the chosenSet
-function pickTheChosen(arr, uniqueArr) {
-    if (uniqueArr.length === 1) {
-        let newArr = arr.filter((el) => {
-            return el.set == uniqueArr[0].set
-        })
-        return newArr
-    } else {
-        return arr
-    }
-}
-
-function showResult(arr, chosenSet, uniqueArr) {
-    resultArea.innerHTML = ''
-    if (chosenSet !== '') {
-        uniqueArr = uniqueArr.filter((el) => {
-            return el.set === chosenSet
-        })
-    }
-    uniqueArr.forEach((el) => {
-        let resultEl = document.createElement('div')
-        let title = document.createElement('h3')
-        title.innerHTML = `Set: ${el.set}`
-        resultEl.appendChild(title)
-        resultEl.setAttribute('class', `result-${el.set} card`)
-        resultEl.setAttribute('style', `background-color: #f0f9ff; padding: 1em; margin: 1em 0;`)
-        resultArea.appendChild(resultEl)
-    })
-
-    arr = pickTheChosen(arr, uniqueArr)
-
-    arr.forEach((el) => {
-        targetArea = document.querySelector(`.result-${el.set}`)
-        if (el.ok) {
-            targetArea.innerHTML += `<div><p style="margin-top: 1em; padding-left: 1em; font-size: 1.5em;" class="card-text">${el.index}. ${el.name} <small style="font-size: 0.5em">Ingredient: ${el.ingredients}</small></p></div>`
-        } else {
-            targetArea.innerHTML += `<div><p style="margin-top: 1em; font-size: 1.5em;" class="card-text"><i style="color: red;" class="fas fa-skull-crossbones"></i> ${el.index}. ${el.name} <small style="font-size: 0.5em;">Ingredient: ${el.ingredients}<small></p></div>`
-        }
-    })
-}
-
-
-
-filterInput.addEventListener('submit', (e) => {
-    console.log('start')
-    const filtersInput = document.querySelectorAll('.filter-input')
-    const chosenSet = document.getElementById('chosen-set').value
-    let filters = {
-        set: '',
-        filters: []
-    }
-    filtersInput.forEach(el => {
-        if (el.value != '') {
-            filters.filters.push(el.value)
-        }
-
-    })
-    if (filters.filters.length !== 0) {
+$('#input').click(function (e) {
+    $('#form').submit(function (e) {
         e.preventDefault()
+        let ingredientArr = []
+        let ingredients = document.querySelectorAll('.ingredient-input')
+        ingredients.forEach(el => ingredientArr.push(el.value))
+        let arr = [setInput, indexInput, dishInput, categoryInput]
+        console.log(arr)
+
+        const newDish = {
+            set: setInput.value,
+            name: dishInput.value,
+            index: indexInput.value,
+            category: categoryInput.value,
+            ingredients: ingredientArr
+        }
+        console.log(newDish)
         $.ajax({
-            url: 'http://localhost:3000/search',
+            // url: 'http://localhost:3000/post',
+            url: 'https://menu-server-jim.herokuapp.com/post',
             type: 'POST',
             dataType: 'json',
             contentType: "application/json; charset=utf-8",
-            data: JSON.stringify(filters),
-            success: async function (data, textStatus, jqXHR) {
-                let uniqueSetList = findUnique(data)
-                let uniqueArr = createUniqueArr(uniqueSetList)
-                checkIngredient(data, filters.filters)
-                countRank(data, uniqueArr)
-                sortArr(uniqueArr)
-                showResult(data, chosenSet, uniqueArr)
-
+            data: JSON.stringify(newDish),
+            success: function (data, textStatus, jqXHR) {
+                console.log(data);
+                console.log(textStatus);
+                console.log(jqXHR);
             }
         })
+        clearValue(arr)
+        ingredientNode.innerHTML = ''
+    })
+})
+
+
+
+$('#update').click(function (e) {
+    $('#form').submit(function (e) {
+        console.log('update')
+        e.preventDefault()
+        let ingredientArr = []
+        let ingredients = document.querySelectorAll('.ingredient-input')
+        ingredients.forEach(el => ingredientArr.push(el.value))
+        let arr = [setInput, indexInput, dishInput, categoryInput]
+        console.log(arr)
+
+        const newDish = {
+            set: setInput.value,
+            name: dishInput.value,
+            category: categoryInput.value,
+            index: indexInput.value,
+            ingredients: ingredientArr
+        }
+        console.log(newDish)
+        $.ajax({
+            url: 'https://menu-server-jim.herokuapp.com/findandmodify',
+            type: 'POST',
+            dataType: 'json',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(newDish),
+            success: function (data, textStatus, jqXHR) {
+                console.log(data);
+                console.log(textStatus);
+                console.log(jqXHR);
+            }
+        })
+        clearValue(arr)
+        clearValue(ingredients)
+    })
+
+
+})
+
+
+
+
+searchByName.addEventListener('submit', (e) => {
+    e.preventDefault()
+    const data = {
+        name: dishNameSearch.value
     }
+    searchResult.innerHTML = ''
 
+    $.ajax({
+        // url: 'http://localhost:3000/searchbyname',
+        url: 'https://menu-server-jim.herokuapp.com/searchbyname',
+        type: 'POST',
+        dataType: 'json',
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify(data),
+        success: function (data, textStatus, jqXHR) {
+            console.log(data);
+            console.log(textStatus);
+            console.log(jqXHR);
+            if (data.length !== 0) {
+                indexInput.value = data[0].index
+                setInput.value = data[0].set
+                dishInput.value = data[0].name
+                categoryInput.value = data[0].category
+                ingredientNode.innerHTML = ''
+                for (let i = 0; i < data[0].ingredients.length; i++) {
+                    let newLabel = document.createElement('label')
+                    let newInput = document.createElement('input')
+                    newLabel.setAttribute('class', 'col-sm-2 col-form-label')
+                    newInput.setAttribute('class', 'ingredient-input form-control')
+                    newInput.required = true
+                    newInput.value = data[0].ingredients[i]
+                    ingredientNode.appendChild(newLabel)
+                    ingredientNode.appendChild(newInput)
+
+                }
+                searchResult.innerHTML = 'Dish Found'
+            } else {
+                searchResult.innerHTML = 'Dish Not Found'
+                indexInput.value = ''
+                setInput.value = ''
+                dishInput.value = ''
+                categoryInput.value = ''
+                ingredientNode.innerHTML = ''
+                // console.log('Not found')
+            }
+
+
+        }
+    })
+    // clearValue(arr)
+    // clearValue(ingredients)
+
+    // sendRequest(newDish)
 })
 
 
-clear.addEventListener('click', function () {
-    location.reload();
-})
-
+function addIngredientInput() {
+    let newLabel = document.createElement('label')
+    let newInput = document.createElement('input')
+    newLabel.setAttribute('class', 'col-sm-2 col-form-label')
+    newInput.setAttribute('class', 'ingredient-input form-control')
+    newInput.required = true
+    ingredientNode.appendChild(newLabel)
+    ingredientNode.appendChild(newInput)
+}

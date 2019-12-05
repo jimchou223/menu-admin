@@ -8,30 +8,28 @@
 }
 
 .wrapper-for-input {
-  width: 60%;
+  width: 80%;
   margin: auto;
 }
 
 .wrapper-for-input h2 {
-    text-align: center;
+  text-align: center;
 }
 
 input {
   margin: 1em 0;
 }
 
-/* #input {
-    text-align: center;
+.search-dish-area {
+  width: 30%;
+  float: left;
 }
 
-#input label{
-    float: left;
-    text-align: right;
-}
+#input-ingredient-area {
+  width: 70%;
+  float: right;
 
-#input input {
-    float: left;
-} */
+}
 
 #filter-input {
   background-color: lightgray;
