@@ -13,9 +13,9 @@ let filterInput = document.getElementById('filter-input')
 let categoryInput = document.getElementById('category-input')
 
 const searchByName = document.getElementById('search-by-name')
-const dishNameSearch = document.getElementById('dish-name-search')
+let dishNameSearch = document.getElementById('dish-name-search')
 
-const searchResult = document.getElementById('search-result')
+let searchResult = document.getElementById('search-result')
 
 const clear = document.getElementById('clear')
 
@@ -67,7 +67,16 @@ inputDeleteRow.addEventListener('click', function (e) {
 $('#clear').click(function (e) {
     e.preventDefault()
     console.log('clear')
-    window.location.reload()
+    // window.location.reload()
+    clearValue(arr)
+    // clearValue(ingredients)
+    dishNameSearch.value = ''
+    searchResult.innerHTML = ''
+    indexInput.value = ''
+    setInput.value = ''
+    dishInput.value = ''
+    categoryInput.value = ''
+    ingredientNode.innerHTML = ''
 })
 
 $('#remove').click(function (e) {
@@ -128,8 +137,62 @@ $('#input').click(function (e) {
         ingredientNode.innerHTML = ''
     })
 })
+let alldishArr = []
+function getAll() {
+
+    $.ajax({
+        // url: 'http://localhost:3000/search',
+        url: 'https://menu-server-jim.herokuapp.com/findall',
+        type: 'GET',
+        dataType: 'json',
+        contentType: "application/json; charset=utf-8",
+        // data: JSON.stringify(filters),
+        success: async function (data, textStatus, jqXHR) {
+            data.forEach((el) => {
+                alldishArr.push({ name: el.name })
+            })
+            console.log(alldishArr)
+        }
+
+    })
+
+}
+let filtered = []
+
+searchByName.addEventListener('input', function (e) {
+    searchResult.innerHTML = ''
+    e.preventDefault()
 
 
+    console.log(e.target.value)
+    alldishArr.filter((el) => {
+        if (el.name.includes(e.target.value)) {
+            filtered.push(el)
+
+        }
+    })
+    console.log(filtered)
+    if (e.target.value !== '') {
+        for (let i = 0; i < filtered.length; i++) {
+            searchResult.innerHTML += `<p>${filtered[i].name}</p>`
+        }
+    }
+
+
+
+})
+
+$('#get-all-btn').click(function (e) {
+    // e.preventDefault()
+    console.log('click')
+    // searchResult.innerHTML = ''
+    console.log(filtered.length)
+    console.log(filtered)
+    for (let i = 0; i < alldishArr.length; i++) {
+        searchResult.innerHTML += `<p>${alldishArr[i].name}</p>`
+        console.log('print')
+    }
+})
 
 $('#update').click(function (e) {
     $('#form').submit(function (e) {

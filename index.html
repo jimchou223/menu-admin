@@ -14,7 +14,7 @@
     <title>Document</title>
 </head>
 
-<body>
+<body onload="getAll()">
 
     <div class="wrapper-for-input">
 
@@ -28,7 +28,8 @@
                 </div>
                 <input type="submit" class="btn btn-primary">
             </form>
-            <p id="search-result"></p>
+            <button id="get-all-btn" class="btn btn-info">Get all</button>
+            <div id="search-result"></div>
         </div>
         <div id="input-ingredient-area">
             <h2>Enter your menu</h2>
