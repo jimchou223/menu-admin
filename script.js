@@ -139,15 +139,15 @@ $('#input').click(function (e) {
 })
 let alldishArr = []
 function getAll() {
-
     $.ajax({
-        // url: 'http://localhost:3000/search',
+        // url: 'http://localhost:3000/findall',
         url: 'https://menu-server-jim.herokuapp.com/findall',
         type: 'GET',
         dataType: 'json',
         contentType: "application/json; charset=utf-8",
         // data: JSON.stringify(filters),
         success: async function (data, textStatus, jqXHR) {
+            console.log(data)
             data.forEach((el) => {
                 alldishArr.push({ name: el.name })
             })
@@ -157,22 +157,24 @@ function getAll() {
     })
 
 }
-let filtered = []
+
 
 searchByName.addEventListener('input', function (e) {
-    searchResult.innerHTML = ''
     e.preventDefault()
-
-
-    console.log(e.target.value)
+    let filtered = []
+    searchResult.innerHTML = ''
+    // console.log(e.target.value)
     alldishArr.filter((el) => {
         if (el.name.includes(e.target.value)) {
             filtered.push(el)
 
         }
     })
-    console.log(filtered)
+    // console.log(filtered)
+
     if (e.target.value !== '') {
+
+
         for (let i = 0; i < filtered.length; i++) {
             searchResult.innerHTML += `<p>${filtered[i].name}</p>`
         }
@@ -184,10 +186,10 @@ searchByName.addEventListener('input', function (e) {
 
 $('#get-all-btn').click(function (e) {
     // e.preventDefault()
-    console.log('click')
-    // searchResult.innerHTML = ''
-    console.log(filtered.length)
-    console.log(filtered)
+    // console.log('click')
+    searchResult.innerHTML = ''
+    // console.log(filtered.length)
+    // console.log(filtered)
     for (let i = 0; i < alldishArr.length; i++) {
         searchResult.innerHTML += `<p>${alldishArr[i].name}</p>`
         console.log('print')
