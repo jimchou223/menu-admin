@@ -177,6 +177,8 @@ $('#update').click(function (e) {
 
 
 function addFound(data) {
+    // console.log('helloe')
+    console.log(data)
     if (data.length !== 0) {
         indexInput.value = data[0].index
         setInput.value = data[0].set
@@ -209,7 +211,10 @@ searchByName.addEventListener('submit', (e) => {
         name: dishNameSearch.value
     }
     searchResult.innerHTML = ''
-    ajaxRequest('https://menu-server-jim.herokuapp.com/searchbyname', "POST", JSON.stringify(data), addFound)
+    console.log('search')
+    ajaxRequest('http://localhost:3000/searchbyname', "POST", JSON.stringify(data), addFound)
+    // ajaxRequest('https://menu-server-jim.herokuapp.com/search', "POST", JSON.stringify(data), addFound)
+
 
 })
 
