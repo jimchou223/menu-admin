@@ -212,8 +212,8 @@ searchByName.addEventListener('submit', (e) => {
     }
     searchResult.innerHTML = ''
     console.log('search')
-    ajaxRequest('http://localhost:3000/searchbyname', "POST", JSON.stringify(data), addFound)
-    // ajaxRequest('https://menu-server-jim.herokuapp.com/search', "POST", JSON.stringify(data), addFound)
+    // ajaxRequest('http://localhost:3000/searchbyname', "POST", JSON.stringify(data), addFound)
+    ajaxRequest('https://menu-server-jim.herokuapp.com/search', "POST", JSON.stringify(data), addFound)
 
 
 })
