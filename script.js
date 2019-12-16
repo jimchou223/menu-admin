@@ -53,6 +53,17 @@ inputDeleteRow.addEventListener('click', function (e) {
     // }
 })
 
+// function chooseInput() {
+//     let setInput = 'test'
+//     if ($('#set-input').value == '') {
+//         setInput = $('create-set').value
+//     } else if ($('#set-input').value !== '') {
+//         setInput = $('#set-input').value
+//     }
+//     console.log(setInput)
+//     return setInput
+
+// }
 
 $('#clear').click(function (e) {
     e.preventDefault()
@@ -68,8 +79,8 @@ function ajaxRequest(url, type, data, callback) {
         data: data,
         success: function (data, textStatus, jqXHR) {
             console.log(data);
-            console.log(textStatus);
-            console.log(jqXHR);
+            // console.log(textStatus);
+            // console.log(jqXHR);
             callback(data)
         }
     })
@@ -80,8 +91,10 @@ $('#remove').click(function (e) {
     const newDish = {
         name: dishInput.value,
     }
-    ajaxRequest('https://menu-server-jim.herokuapp.com/deleteone', "POST", JSON.stringify(newDish))
+    ajaxRequest('http://localhost:3000/deleteone', "POST", JSON.stringify(newDish))
+    // ajaxRequest('https://menu-server-jim.herokuapp.com/deleteone', "POST", JSON.stringify(newDish))
     clearForm()
+    alert('one deleted')
     // clearValue(ingredients)
 })
 
@@ -93,35 +106,73 @@ $('#input').click(function (e) {
         let ingredients = document.querySelectorAll('.ingredient-input')
         ingredients.forEach(el => ingredientArr.push(el.value))
 
+        // setInput = chooseInput($('#set-input'), $('#create-set'))
+        let ans
+        if ($('#set-input').value == 'empty') {
+            ans = $('create-set').val()
+        } else if ($('#set-input').value !== '') {
+            ans = $("#set-input :selected").val()
+        }
+
         const newDish = {
-            set: setInput.value,
+            set: ans,
             name: dishInput.value,
             index: indexInput.value,
             category: categoryInput.value,
             ingredients: ingredientArr
         }
+        console.log(newDish)
 
-        ajaxRequest('https://menu-server-jim.herokuapp.com/post', "POST", JSON.stringify(newDish))
+
+        ajaxRequest('http://localhost:3000/post', "POST", JSON.stringify(newDish))
+        // ajaxRequest('https://menu-server-jim.herokuapp.com/post', "POST", JSON.stringify(newDish))
         clearForm()
     })
     alert('new dish added')
 })
 
+let allSetArr = []
 
 function putData(data) {
     data.forEach((el) => {
         alldishArr.push({ name: el.name })
+        if (!allSetArr.includes(el.set)) {
+            allSetArr.push(el.set)
+        }
     })
+    for (let i = 0; i < allSetArr.length; i++) {
+        $('#set-input').append(`<option>${allSetArr[i]}</option>`)
+    }
+
 }
+
 
 function clearForm() {
     clearValue(arr)
     ingredientNode.innerHTML = ''
 }
 
+function addOption() {
+
+
+}
+
 let alldishArr = []
-function getAll() {
+async function getAll() {
     ajaxRequest('https://menu-server-jim.herokuapp.com/findall', "GET", '', putData)
+    // addOption()
+    // uniqueSetArr = findUnique(allSetArr)
+    // console.log(uniqueSetArr)
+}
+
+function findUnique(arr) {
+    let newArr = []
+    for (let i = 0; i < arr.length; i++) {
+        if (!newArr.includes(arr[i])) {
+            newArr.push(arr[i])
+        }
+    }
+    return newArr
 }
 
 
@@ -158,16 +209,25 @@ $('#update').click(function (e) {
         let ingredients = document.querySelectorAll('.ingredient-input')
         ingredients.forEach(el => ingredientArr.push(el.value))
         let arr = [setInput, indexInput, dishInput, categoryInput]
-        console.log(arr)
+
+        let ans
+        if ($('#set-input').value == '') {
+            ans = $('create-set').value
+        } else if ($('#set-input').value !== '') {
+            ans = $("#set-input :selected").val()
+        }
+        console.log(ans)
 
         const newDish = {
-            set: setInput.value,
+            set: ans,
             name: dishInput.value,
             category: categoryInput.value,
             index: indexInput.value,
             ingredients: ingredientArr
         }
-        ajaxRequest('https://menu-server-jim.herokuapp.com/findandmodify', "POST", JSON.stringify(newDish))
+        console.log(newDish.set)
+        ajaxRequest('http://localhost:3000/findandmodify', "POST", JSON.stringify(newDish))
+        // ajaxRequest('https://menu-server-jim.herokuapp.com/findandmodify', "POST", JSON.stringify(newDish))
         clearForm()
     })
     alert('update completed')
@@ -211,9 +271,10 @@ searchByName.addEventListener('submit', (e) => {
         name: dishNameSearch.value
     }
     searchResult.innerHTML = ''
-    console.log('search')
+
     // ajaxRequest('http://localhost:3000/searchbyname', "POST", JSON.stringify(data), addFound)
     ajaxRequest('https://menu-server-jim.herokuapp.com/searchbyname', "POST", JSON.stringify(data), addFound)
+
 
 
 })
