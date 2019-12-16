@@ -91,8 +91,8 @@ $('#remove').click(function (e) {
     const newDish = {
         name: dishInput.value,
     }
-    ajaxRequest('http://localhost:3000/deleteone', "POST", JSON.stringify(newDish))
-    // ajaxRequest('https://menu-server-jim.herokuapp.com/deleteone', "POST", JSON.stringify(newDish))
+    // ajaxRequest('http://localhost:3000/deleteone', "POST", JSON.stringify(newDish))
+    ajaxRequest('https://menu-server-jim.herokuapp.com/deleteone', "POST", JSON.stringify(newDish))
     clearForm()
     alert('one deleted')
     // clearValue(ingredients)
@@ -124,8 +124,8 @@ $('#input').click(function (e) {
         console.log(newDish)
 
 
-        ajaxRequest('http://localhost:3000/post', "POST", JSON.stringify(newDish))
-        // ajaxRequest('https://menu-server-jim.herokuapp.com/post', "POST", JSON.stringify(newDish))
+        // ajaxRequest('http://localhost:3000/post', "POST", JSON.stringify(newDish))
+        ajaxRequest('https://menu-server-jim.herokuapp.com/post', "POST", JSON.stringify(newDish))
         clearForm()
     })
     alert('new dish added')
@@ -226,8 +226,8 @@ $('#update').click(function (e) {
             ingredients: ingredientArr
         }
         console.log(newDish.set)
-        ajaxRequest('http://localhost:3000/findandmodify', "POST", JSON.stringify(newDish))
-        // ajaxRequest('https://menu-server-jim.herokuapp.com/findandmodify', "POST", JSON.stringify(newDish))
+        // ajaxRequest('http://localhost:3000/findandmodify', "POST", JSON.stringify(newDish))
+        ajaxRequest('https://menu-server-jim.herokuapp.com/findandmodify', "POST", JSON.stringify(newDish))
         clearForm()
     })
     alert('update completed')
